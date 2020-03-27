@@ -30,7 +30,7 @@ OSI 七层网络模型
 | :----------------------------: | :-------------------------------: |
 |             字节流             |              数据报               |
 | 每个包都有 TCP 部首（20 字节） | 仅有第一个包有 UDP 部首（8 字节） |
-|      无差错、有序、无差错      |              不可靠               |
+|  无差错、有序、不丢失、不重复  |              不可靠               |
 |           有连接状态           |            无连接状态             |
 |         有拥塞控制算法         |          无拥塞控制算法           |
 
@@ -79,8 +79,24 @@ OSI 七层网络模型
 * mtr 更详细的路由信息mtr为My traceroute的简写
 * nslookup www.baidu.com 解析域名www.baidu.com对应IP
 * telnet www.baidu.com 80 查看连接到www.baidu.com域名对应主机80端口是否可用
-  * 退出使用CTRL+] 输入quit退出
+  * 退出使用ctrl+] 输入quit退出
 * tcpdump -i any -n host 10.0.0.1 and port 80 -w /tmp/filename 抓取-i any任意网卡 -n不反解域名host 10.0.0.1 port 80的数据包 -w保存至/tmp/filename中
+
+### SysV和systemd管理网络服务
+* /etc/sysconfig/network-scripts/ifcfg-eth0 网卡eth0配置
+  * 配置完成后SysV(自CentOS8后不再启用该服务)或者systemd(推荐)重启服务使服务生效
+* SysV
+  * service network start|stop|restart 启动|停止|重启网络服务
+  * chkconfig --list network 显示各个级别SysV服务启用情况
+* systemd
+  * systemctl list-unit-files NetworkManager.service 查看服务启用情况
+  * systemctl start|stop|restart NetworkManager 启动|停止|重启NetworkManager
+  * systemctl enable|disable NetworkManager 启用|禁用NetworkManager
+* /etc/hosts 配置主机名和IP对应关系
+  * hostname 查看主机名
+    * hostname temporary 临时修改主机名为temporary
+    * hostname set-hostname permanent 永久修改主机名为permanent
+  * `127.0.0.1 permanent`添加至hosts文件
 
 ## 操作系统
 
@@ -189,7 +205,7 @@ Linux版本：
     * g 移到首行
     * G 移到尾行
   * insert 插入模式
-    * 正常输入命令
+    * 正常输入文本
   * command 命令模式
     * :set nu 显示行号
     * :w 保存
@@ -204,6 +220,85 @@ Linux版本：
     * v 字符可视模式
     * V 行可视模式
     * ctrl+v 块可视模式
+
+#### 进程管理
+
+* ps 进程状态
+  * ps -e | more 
+  * ps -ef 显示 UID启动用户ID(有效用户ID) PPID父进程ID CMD执行文件路径
+  * ps -L 显示 LWP线程
+* pstree 进程状态树
+* top 动态显示负载情况
+  * load average: 0.00, 0.00, 0.00 平均负载:1分钟,5分钟,15分钟的采样结果
+  * Tasks: total running sleeping stopped zombie 
+  * %Cpu(s): us sy ni id wa hi si st
+    * 所有状态数值相加为100
+  * PID USER PR NI VIRT RES SHR S %CPU %MEM TIME+ COMMAND
+
+%Cpu(s)状态说明
+
+| 状态 | 含义            | 说明                                          |
+| ---- | --------------- | --------------------------------------------- |
+| us   | user CPU time   | 用户空间占用CPU百分比                         |
+| sy   | system CPU time | 内核空间占用CPU百分比                         |
+| ni   | nice CPU time   | 用户进程空间内改变过优先级的进程占用CPU百分比 |
+| id   | idle            | 空闲CPU百分比                                 |
+| wa   | iowait          | 等待输入输出的CPU时间百分比                   |
+| hi   | hardware irq    | 硬件中断                                      |
+| si   | software irq    | 软件中断                                      |
+| st   | steal time      | 实时                                          |
+
+top参数说明
+
+| 参数    | 说明                                                        |
+| :------ | :---------------------------------------------------------- |
+| PID     | 进程号                                                      |
+| USER    | 用户名                                                      |
+| PR      | 优先级                                                      |
+| NI      | nice值(-20~19优先级由高到低)                                |
+| RES     | 进程使用未被换出的物理内存大小(kb)                          |
+| SHR     | 共享内存大小(kb)                                            |
+| S       | D 不可中断睡眠<br>R 运行<br>S 睡眠<br>T 跟踪/停止<br>Z 僵尸 |
+| %CPU    | CPU使用率                                                   |
+| %MEM    | 进程使用的物理内存百分比                                    |
+| TIME+   | 进程使用的CPU时间总计(1/100秒)                              |
+| COMMAND | 执行的命令                                                  |
+
+* nice -n 10 ./a.sh 执行a.sh优先级10
+  * sudo renice -n 15 21610 修改进程21610的优先级为15
+* jobs 查看后台运行进程
+  * ctrl+z 停止进程
+  * fg 切到前台
+  * bg 切到后台
+* nohup tail -f /var/log/messages & 即使关掉终端tail进程依然得以运行 & 配合后台运行空出终端 tail输出追加到nohup.out文件中
+
+| 守护进程daemon | 一般进程     | 通过nohup启动的进程        |
+| -------------- | ------------ | -------------------------- |
+| 不需要终端     | 通过终端启动 | 终端启动忽略挂起hangup信号 |
+| 不可卸载目录   | 任意工作目录 | 占用进程启动目录           |
+| 输出到特殊文件 | 输出到终端   | 输出到特殊文件             |
+
+#### 包管理
+
+| 发行版           | 工具 | 软件包 |
+| ---------------- | ---- | ------ |
+| centos<br>redhat | yum  | rpm    |
+| debian<br>ubuntu | apt  | deb    |
+
+* yum源安装
+  * /etc/yum.repos.d/CentOS-Base.repo yum源配置
+  * sudo wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo 下载阿里云镜像源配置替换官方yum源配置
+  * yum makecache 生成缓存
+  * yum update 软件升级
+* 二进制安装
+* 源代码安装
+  1. wget https://openresty.org/download/openresty-1.15.8.3.tar.gz 如下载openresty源代码
+  2. tar zxf openresty-1.15.8.3.tar.gz 解压源代码包
+  3. cd openresty-1.15.8.3.tar.gz 切换到源代码路径
+  4. ./configure --prefix=/usr/local/openresty 配置
+     1. sudo yum install openssl-devel 安装相应依赖openssl -devel代表开发库
+  5. make -j 生成到build目录
+  6. make install 将build目录部署到指定的目录当中
 
 ### 性能
 
