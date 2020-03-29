@@ -1,10 +1,10 @@
 # 前言
 
-1. 网络
-2. 操作系统
-3. 数据库
-4. C++
-5. Linux 命令
+* 网络
+* 操作系统
+* 数据库
+* C++
+* Linux 命令
 
 
 ## 网络
@@ -20,11 +20,11 @@ OSI 七层网络模型
 
 ### 应用层
 
-1. http 状态码
+* http 状态码
 
 ### 传输层
 
-1. TCP 和 UDP 的差异
+* TCP 和 UDP 的差异
 
 |              TCP               |                UDP                |
 | :----------------------------: | :-------------------------------: |
@@ -38,40 +38,37 @@ OSI 七层网络模型
 
 * net-tools
   * ifconfig
-    1. 网卡命名
+    * 网卡命名
        * eth0 第一块网卡
        * CentOS一致性网络设备命名
          * eno1 板载网卡
          * ens33 PCI-E网卡
          * enp0s3 无法获取物理信息的PCI-E网卡
-    2. 网络接口命名修改
+    * 网络接口命名修改
+       1. 编辑/etc/default/grub
+       2. 增加biosdevname=0 net.ifnnet.ifnames=0
+       3. $sudo grub2-mkconfig -o /boot/grub2/grub.cfg 更新grub
+       4. $sudo reboot 重启
        * biosdevname和net.ifnames两个参数
          * biosdevname=0 net.ifnames=1 则 网卡名为ens33
          * biosdevname=1 net.ifnames=0 则 网卡名为em1
          * biosdevname=0 net.ifnames=0 则 网卡名为eth0
-       * 编辑/etc/default/grub
-         * 增加biosdevname=0 net.ifnnet.ifnames=0
-       * 更新grub
-         * $sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-       * 重启
-         * $sudo reboot
-    3. 配置IP
+    * 配置IP
        * ipconfig eth0 192.168.1.2 netmask 255.255.255.0 设置IP
        * ifup eth0 启用网卡
        * ifdown eth0 禁用网卡
   * netstat -ntpl 查看端口号对应的服务 -n不反解域名 -t只查看TCP连接 -p查看对应服务 -l之查看listen状态服务(默认是established)
   * route
-    1. route -n 查看网关 -n不反解域名(较快)
-    2. 添加网关
-       * route add default gw 192.168.1.1 添加默认网关 192.168.1.1
-       * route add -host 10.0.0.2 gw 192.168.1.2 添加访问10.0.0.2主机的专用网关192.168.1.2
-       * route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3 添加访问10.0.0.0网段的专用网关192.168.1.3
+    * route -n 查看网关 -n不反解域名(较快)
+    * route add default gw 192.168.1.1 添加默认网关 192.168.1.1
+    * route add -host 10.0.0.2 gw 192.168.1.2 添加访问10.0.0.2主机的专用网关192.168.1.2
+    * route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3 添加访问10.0.0.0网段的专用网关192.168.1.3
 * iproute2
   * ip
-    1. ip addr ls 查看网络状态 ifconfig
-    2. ip link set dev eth0 up 启用网卡 ifup eth0
-    3. ip addr add 192.168.1.2/24 dev eth0 配置IP地址 ifconfig eth0 192.168.1.2 netmask 255.255.255.0
-    4. ip route add 10.0.0/24 via 192.168.1.3 配置10.0.0.0网段的专用网关 route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3
+    * ip addr ls 查看网络状态 ifconfig
+    * ip link set dev eth0 up 启用网卡 ifup eth0
+    * ip addr add 192.168.1.2/24 dev eth0 配置IP地址 ifconfig eth0 192.168.1.2 netmask 255.255.255.0
+    * ip route add 10.0.0/24 via 192.168.1.3 配置10.0.0.0网段的专用网关 route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3
   * ss 同netstat基本一致
 * mii-tool eth0 查看网卡物理连接情况
 * ping 192.168.1.1 ICMP判断是否能连通主机
@@ -101,8 +98,8 @@ OSI 七层网络模型
 ## 操作系统
 
 Linux含义：
-1. Linus编写的操作系统内核
-2. 广义的操作系统
+* Linus编写的操作系统内核
+* 广义的操作系统
 
 Linux版本：
 * 内核版本，如4.18.0
@@ -163,31 +160,35 @@ Linux版本：
 一切皆文件
 
 * 文件查看
-  1. pwd
-  2. cd
-  3. ls
+  *. pwd
+  *. cd
+  *. ls
 * 目录文件的创建和删除
-  1. mkdir
-  2. rmdir
-  3. rm -r
+  *. mkdir
+  *. rmdir
+  *. rm -r
 * 通配符
-  1. * 匹配任何字符串
-  2. ? 匹配1个字符
-  3. [xyz] 匹配xyz任意一个字符
-  4. [a-z] 匹配一个范围
-  5. [!xyz]或[^xyz] 不匹配
+  *. * 匹配任何字符串
+  *. ? 匹配1个字符
+  *. [xyz] 匹配xyz任意一个字符
+  *. [a-z] 匹配一个范围
+  *. [!xyz]或[^xyz] 不匹配
 * 文件操作
-  1. cp -r 文件夹 -p 时间 -a 时间和权限
-  2. mv
+  *. cp -r 文件夹 -p 时间 -a 时间和权限
+  *. mv
 * 文件内容查看
-  1. cat 文件内容显示到终端
-  2. head 查看文件开头
-  3. tail 查看文件结尾 -f 文件更新同步更新
-  4. wc 统计文件内容信息
+  *. cat 文件内容显示到终端
+  *. head 查看文件开头
+  *. tail 查看文件结尾 -f 文件更新同步更新
+     *. tail -f /var/log/message 通过tail查看系统日志
+     *. tail -f /var/log/secure 通过tail查看安全日志
+     *. tail -f /var/log/dmesg 通过tail查看内核日志
+     *. tail -f /var/log/cron 通过tail查看即发(周期性)任务日志
+  *. wc 统计文件内容信息
 * 打包和压缩
-  1. tar cf /tmp/etc.bak.tar /etc
-  2. tar czf /tmp/etc.bak.tar.gz /etc
-  3. tar cjf /tmp/etc.bak.tar.bz2 /etc
+  *. tar cf /tmp/etc.bak.tar /etc
+  *. tar czf /tmp/etc.bak.tar.gz /etc
+  *. tar cjf /tmp/etc.bak.tar.bz2 /etc
 * vi
   * 配置文件 /etc/vimrc
   * normal 正常模式
@@ -278,6 +279,129 @@ top参数说明
 | 不可卸载目录   | 任意工作目录 | 占用进程启动目录           |
 | 输出到特殊文件 | 输出到终端   | 输出到特殊文件             |
 
+* screen 在screen环境中遇到的中断可以恢复
+  * $ sudo yum install epel-release 在CentOS8环境中需要先安装依赖
+  * ctrl+a d 退出(detached)screen环境
+  * screen -ls 查看screen会话
+  * screen -r 22592 恢复22592的screen会话
+* init 由内核启动的
+  * 0 停机或者关机(千万不能将initdefault设置为0)
+  * 1 单用户模式
+  * 2 多用户模式(NFS不可用Net File System)
+  * 3 完全多用户模式(标准的运行级别)
+  * 4 安全模式
+  * 5 图形化(图形界面)
+  * 6 重启(千万不要把initdefault设置为6)
+* service
+  * /etc/init.d 存放service启动脚本
+  * chkconfig --list 查看服务在不同init级别下的启动状态
+  * service network start|stop|restart 启动|停止|重启网络服务
+* systemctl
+  * /usr/lib/systemd/system/ 存放systemctl启动脚本
+  * ls -l /lib/systemd/system/runlevel*.target 查看服务init级别
+    * systemctl get-default 查看当前运行的级别
+    * systemctl set-default multi-user.target 设置默认运行级别为多用户级别(字符级别)
+      * runlevel0.target -> poweroff.target
+      * runlevel1.target -> rescue.target
+      * runlevel2.target -> multi-user.target
+      * runlevel3.target -> multi-user.target
+      * runlevel4.target -> multi-user.target
+      * runlevel5.target -> graphical.target
+      * runlevel6.target -> reboot.target
+  * systemctl list-dependencies 查看服务依赖关系
+  * systemctl start|stop|restart NetworkManager 启动|停止|重启NetworkManager
+  * systemctl enable|disable NetworkManager 启用|禁用NetworkManager
+* selinux 安全子系统 强制访问控制
+  * getenforce 查看当前selinux状态
+    * enforcing - SELinux security policy is enforced.
+    * permissive - SELinux prints warnings instead of enforcing.
+    * disabled - No SELinux policy is loaded.
+  * vim /etc/selinux/config 修改selinux级别(重启生效)
+  * setenforce 0 临时修改selinux级别为Permissive(重启失效)
+    * 1 Enforcing
+    * 0 Permissive
+
+#### 内存和磁盘管理
+
+* free 按照KB为单位查看内存大小 -m按单位MB -g按单位GB
+* fdisk -l 查看磁盘分区
+  1. fdisk /dev/sdb 在磁盘sdb上创建分区
+  2. 根据fdisk帮助创建:n创建分区→p创建主\e拓展分区→分区数量→分区大小→w保存
+  3. mkfs.ext4 /dev/sdb1 通过ext4格式化分区sdb1
+  4. mkdir /mnt/sdb1 创建挂载路径
+  5. mount /dev/sdb1 /mnt/sdb1/ 挂载sdb1磁盘到/mnt/sdb1路径
+  6. /etc/fstab 新增`/dev/sdb1 /mnt/sdb1 ext4 defaults 0 0`
+* parted -l 通过分区工具查看磁盘分区
+  * 大于2t的磁盘分区
+* df -h 查看分区对应目录
+* du -h 查看文件占用实际大小
+  1. dd if=/dev/zero bs=4M count=10 of=hole seek=20 创建一个空洞文件
+  2. ls -lh hole 展示文件大小120M
+  3. du -h 展示文件占用磁盘空间40M
+
+#### 文件系统
+
+| 文件系统 | 特点   |
+| -------- | ------ |
+| ext4     |
+| xfs      |
+| ntfs     | 有版权 |
+
+* ext4
+  * 超级块
+  * 超级块副本
+  * i节点(inode)
+    * 文件名称记录在父目录的i节点中
+    * 文件权限 组 用户 大小 日期 记录在i节点中 即ls查看的信息
+  * 数据块(datablock)
+    * 当目录或者文件数据过多i节点记录数据块位置 数据块记录数据 du统计数据块大小
+  * facl 文件访问控制(Filesystem Access Control List)
+    * getfacl filename 查看文件访问控制权限
+    * setfacl -m u:user1:r filename 赋予user1用户读权限 -m赋予权限 -x收回权限
+    * setfacl -m g:user2:rw filename 赋予user2用户组读写权限 
+* xfs文件系统用户磁盘配额
+  1. mkfs.xfs -f /dev/sdb1 格式化/dev/sdb1为xfs文件系统
+  2. mkdir /mnt/sdb1 创建挂载路径
+  3. mount -o uquota,gquota /dev/sdb1 /mnt/sdb1/ 挂载sdb1磁盘到/mnt/sdb1路径 支持uquota用户磁盘配额 gquota组磁盘配额
+  4. mount 命令查看挂载状态`/dev/sdb1 on /mnt/sdb1 type xfs (rw,relatime,seclabel,attr2,inode64,usrquota,grpquota)`显示支持usrquota和grpquota
+  5. chmod 1777 /mnt/sdb1/ 赋予sdb1可用权限
+  6. xfs_quota -xc 'report -ugibh' /dev/sdb1 查看磁盘配额 u用户 g组 i节点 b块 h人性化显示大小
+  7. xfs_quota -xc 'limit -u isoft=5 ihard=10 user1' /mnt/sdb1/ 限制user1在sdb1磁盘创建inode数量 isoft=5软限制在宽限时间内可以超过 ihard=10绝对不可以超过
+* swap
+  * 以磁盘分区挂载swap
+    1. mkswap /dev/sdb1 格式化sdb1分区为swap
+    2. swapon /dev/sdb1 启用sdb1为swap
+    3. swapoff /dev/sdb1 关闭sdb1为swap
+    4. /etc/fstab 新增`/dev/sdb1 swap swap defaults 0 0`
+  * 以文件挂载swap
+    1. dd if=/dev/zero bs=4M count=1 seek=2047 of=/swapfile 创建swapfile
+    2. mkswap /swapfile `mkswap: /swapfile: insecure permissions 0644, 0600 suggested.` 初始化swapfile为swap
+    3. chmod 0600 /swapfile 修改文件权限为0600
+    4. swapon /swapfile 启用swapfile为swap
+    3. swapoff /swapfile 关闭swapfile为swap
+    5. /etc/fstab 新增`/swapfile swap swap defaults 0 0`
+* 软raid使用
+  1. mdadm -C /dev/md0 -a yes -l1 -n2 /dev/sdb[1,2] 创建软raid分区md0 -C创建 -a yes询问全部选择yes -l1模式raid1 -n2依赖2块磁盘 /dev/sdb[1,2]指定分区sdb1和sdb2
+     * mdadm -S /dev/md0 删除raid分区md0
+  2. mdadm -D /dev/md0 查看raid分区md0
+  3. echo DEVICE /dev/sdb[1,2] >> /etc/mdadm.conf 追加磁盘信息至mdadm配置文件
+  4. mdadm -Evs >> /etc/mdadm.conf
+  5. mkfs.xfs /dev/md0 格式化raid分区md0
+  6. mount /dev/md0 /mnt/md0
+* LVM逻辑卷
+  1. pvcreate /dev/sd[b,c,d]1 通过sdb1 sdc1和sdd1创建物理卷
+  2. pvs 查看物理卷
+  3. vgcreate vg1 /dev/sd[b,c]1 通过sdb1和sdc1创建卷组vg1
+  4. vgs 查看卷组
+  5. lvcreate -L 100M -n lv1 vg1 创建逻辑卷 -L 100M指定大小100M -n lv1逻辑卷名称 vg1所属卷组名称
+  6. mkdir /mnt/lv1 创建逻辑卷对应挂载点
+  7. mkfs.xfs /dev/vg1/lv1 格式化逻辑卷lv1
+  8. mount /dev/vg1/lv1 /mnt/lv1/ 挂载逻辑卷到对应路径
+  9. /etc/fstab 新增逻辑卷挂载节点
+  10. vgextend vg1 /dev/sdd1 拓展卷组vg1
+  11. lvextend -L 59G /dev/vg1/lv1 拓展逻辑卷lv1
+  12. xfs_growfs /dev/vg1/lv1 文件系统拓展
+
 #### 包管理
 
 | 发行版           | 工具 | 软件包 |
@@ -304,7 +428,7 @@ top参数说明
 
 性能指标
 
-1. 高并发(吞吐)
-2. 响应快(延迟)
+* 高并发(吞吐)
+* 响应快(延迟)
 
 #### 
