@@ -78,6 +78,7 @@ OSI 七层网络模型
 * telnet www.baidu.com 80 查看连接到www.baidu.com域名对应主机80端口是否可用
   * 退出使用ctrl+] 输入quit退出
 * tcpdump -i any -n host 10.0.0.1 and port 80 -w /tmp/filename 抓取-i any任意网卡 -n不反解域名host 10.0.0.1 port 80的数据包 -w保存至/tmp/filename中
+* iftop -P 查看本地端口的带宽使用情况 -P混杂模式
 
 ### SysV和systemd管理网络服务
 * /etc/sysconfig/network-scripts/ifcfg-eth0 网卡eth0配置
@@ -118,6 +119,28 @@ Linux版本：
 | centos | 基于redhat、免费       |
 | debian | 图形界面桌面系统、免费 |
 | ubuntu | 图形界面桌面系统、免费 |
+
+### 启动过程
+
+1. BIOS
+2. MBR
+   * dd if=/dev/sda of=mbr.bin bs=446 count=1 记录MBR信息到mbr.bin文件
+   * dd if=/dev/sda of=mbr2.bin bs=512 count=1 记录含分区表的MBR信息到mbr2.bin文件
+     * hexdump -C mbr2.bin | more 按照16进制显示mbr2.bin文件 以55aa结尾表示此设备可引导
+3. BootLoader(grub)
+   * /boot/grub2/ 根据grub的配置文件选择内核
+   * grub2-editenv list 查看默认引导内核
+   * uname -r 查看当前使用内核
+4. kernel
+   * centos6使用/usr/sbin/init进行引导
+     * /etc/rd.d 读取各项服务启动脚本
+   * centos6以后的版本使用systemd进行引导
+     * /etc/systemd/system 默认启动级别
+       * /usr/lib/systemd/system 读取各项服务配置文件
+5. systemd 启动各项服务
+6. 系统初始化
+7. shell
+   * file /sbin/grub2-mkconfig 系统中通过命令执行的脚本代表该文件实际是脚本
 
 ### 系统操作
 
@@ -235,6 +258,7 @@ Linux版本：
   * %Cpu(s): us sy ni id wa hi si st
     * 所有状态数值相加为100
   * PID USER PR NI VIRT RES SHR S %CPU %MEM TIME+ COMMAND
+* sar -uh 1 10 系统状态显示 -u显示cpu -r内存 -b磁盘 -d每一块磁盘 -q进程的使用 1时间间隔1s 10次数
 
 %Cpu(s)状态说明
 
@@ -338,6 +362,27 @@ top参数说明
   1. dd if=/dev/zero bs=4M count=10 of=hole seek=20 创建一个空洞文件
   2. ls -lh hole 展示文件大小120M
   3. du -h 展示文件占用磁盘空间40M
+* 软raid使用
+  1. mdadm -C /dev/md0 -a yes -l1 -n2 /dev/sdb[1,2] 创建软raid分区md0 -C创建 -a yes询问全部选择yes -l1模式raid1 -n2依赖2块磁盘 /dev/sdb[1,2]指定分区sdb1和sdb2
+     * mdadm -S /dev/md0 删除raid分区md0
+  2. mdadm -D /dev/md0 查看raid分区md0
+  3. echo DEVICE /dev/sdb[1,2] >> /etc/mdadm.conf 追加磁盘信息至mdadm配置文件
+  4. mdadm -Evs >> /etc/mdadm.conf
+  5. mkfs.xfs /dev/md0 格式化raid分区md0
+  6. mount /dev/md0 /mnt/md0
+* LVM逻辑卷
+  1. pvcreate /dev/sd[b,c,d]1 通过sdb1 sdc1和sdd1创建物理卷
+  2. pvs 查看物理卷
+  3. vgcreate vg1 /dev/sd[b,c]1 通过sdb1和sdc1创建卷组vg1
+  4. vgs 查看卷组
+  5. lvcreate -L 100M -n lv1 vg1 创建逻辑卷 -L 100M指定大小100M -n lv1逻辑卷名称 vg1所属卷组名称
+  6. mkdir /mnt/lv1 创建逻辑卷对应挂载点
+  7. mkfs.xfs /dev/vg1/lv1 格式化逻辑卷lv1
+  8. mount /dev/vg1/lv1 /mnt/lv1/ 挂载逻辑卷到对应路径
+  9. /etc/fstab 新增逻辑卷挂载节点
+  10. vgextend vg1 /dev/sdd1 拓展卷组vg1
+  11. lvextend -L 59G /dev/vg1/lv1 拓展逻辑卷lv1
+  12. xfs_growfs /dev/vg1/lv1 文件系统拓展
 
 #### 文件系统
 
@@ -380,27 +425,15 @@ top参数说明
     4. swapon /swapfile 启用swapfile为swap
     3. swapoff /swapfile 关闭swapfile为swap
     5. /etc/fstab 新增`/swapfile swap swap defaults 0 0`
-* 软raid使用
-  1. mdadm -C /dev/md0 -a yes -l1 -n2 /dev/sdb[1,2] 创建软raid分区md0 -C创建 -a yes询问全部选择yes -l1模式raid1 -n2依赖2块磁盘 /dev/sdb[1,2]指定分区sdb1和sdb2
-     * mdadm -S /dev/md0 删除raid分区md0
-  2. mdadm -D /dev/md0 查看raid分区md0
-  3. echo DEVICE /dev/sdb[1,2] >> /etc/mdadm.conf 追加磁盘信息至mdadm配置文件
-  4. mdadm -Evs >> /etc/mdadm.conf
-  5. mkfs.xfs /dev/md0 格式化raid分区md0
-  6. mount /dev/md0 /mnt/md0
-* LVM逻辑卷
-  1. pvcreate /dev/sd[b,c,d]1 通过sdb1 sdc1和sdd1创建物理卷
-  2. pvs 查看物理卷
-  3. vgcreate vg1 /dev/sd[b,c]1 通过sdb1和sdc1创建卷组vg1
-  4. vgs 查看卷组
-  5. lvcreate -L 100M -n lv1 vg1 创建逻辑卷 -L 100M指定大小100M -n lv1逻辑卷名称 vg1所属卷组名称
-  6. mkdir /mnt/lv1 创建逻辑卷对应挂载点
-  7. mkfs.xfs /dev/vg1/lv1 格式化逻辑卷lv1
-  8. mount /dev/vg1/lv1 /mnt/lv1/ 挂载逻辑卷到对应路径
-  9. /etc/fstab 新增逻辑卷挂载节点
-  10. vgextend vg1 /dev/sdd1 拓展卷组vg1
-  11. lvextend -L 59G /dev/vg1/lv1 拓展逻辑卷lv1
-  12. xfs_growfs /dev/vg1/lv1 文件系统拓展
+
+#### shell脚本
+* 内建命令和外部命令
+  * 内建命令不创建子进程 对当前shell生效
+    * bash ./filename.sh 不需要filename.sh执行权限
+    * ./filename.sh 
+  * 外部命令创建子进程 对当前shell隔离
+    * source ./filename.sh
+    * . filename.sh
 
 #### 包管理
 
