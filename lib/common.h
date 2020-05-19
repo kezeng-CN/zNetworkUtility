@@ -2,8 +2,8 @@
 // Created by zengke on 2019-07-07.
 //
 
-#ifndef YOLANDA_COMMON_H
-#define YOLANDA_COMMON_H
+#ifndef COMMON_H
+#define COMMON_H
 
 #include "config.h"
 
@@ -79,4 +79,4 @@ int tcp_client(char *address, int port);
 #define    LISTENQ        1024
 #define    BUFFER_SIZE    4096
 
-#endif //YOLANDA_COMMON_H
+#endif //COMMON_H
