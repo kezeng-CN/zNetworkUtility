@@ -6,7 +6,6 @@
 * C++
 * Linux 命令
 
-
 ## 网络
 
 OSI 七层网络模型
@@ -46,9 +45,10 @@ OSI 七层网络模型
          * enp0s3 无法获取物理信息的PCI-E网卡
     * 网络接口命名修改
        1. 编辑/etc/default/grub
-       2. 增加biosdevname=0 net.ifnnet.ifnames=0
+       2. GRUB_CMDLINE_LINUX增加biosdevname=0 net.ifnnet.ifnames=0
        3. $sudo grub2-mkconfig -o /boot/grub2/grub.cfg 更新grub
-       4. $sudo reboot 重启
+       4. 移动配置文件 mv /etc/sysconfig/network-scripts/ifcfg-enp0s3 /etc/sysconfig/network-scripts/ifcfg-eth0
+       5. $sudo reboot 重启
        * biosdevname和net.ifnames两个参数
          * biosdevname=0 net.ifnames=1 则 网卡名为ens33
          * biosdevname=1 net.ifnames=0 则 网卡名为em1
@@ -351,7 +351,7 @@ top参数说明
 * fdisk -l 查看磁盘分区
   1. fdisk /dev/sdb 在磁盘sdb上创建分区
   2. 根据fdisk帮助创建:n创建分区→p创建主\e拓展分区→分区数量→分区大小→w保存
-  3. mkfs.ext4 /dev/sdb1 通过ext4格式化分区sdb1
+  3. partprobe && mkfs.ext4 /dev/sdb1 通知系统分区表的变化并通过ext4格式化分区sdb1
   4. mkdir /mnt/sdb1 创建挂载路径
   5. mount /dev/sdb1 /mnt/sdb1/ 挂载sdb1磁盘到/mnt/sdb1路径
   6. /etc/fstab 新增`/dev/sdb1 /mnt/sdb1 ext4 defaults 0 0`
