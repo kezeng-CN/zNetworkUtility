@@ -33,43 +33,44 @@ OSI 七层网络模型
 |           有连接状态           |            无连接状态             |
 |         有拥塞控制算法         |          无拥塞控制算法           |
 
-### net-tools和iproute2
+### net-tools
 
-* net-tools
-  * ifconfig
-    * 网卡命名
-       * eth0 第一块网卡
-       * CentOS一致性网络设备命名
-         * eno1 板载网卡
-         * ens33 PCI-E网卡
-         * enp0s3 无法获取物理信息的PCI-E网卡
-    * 网络接口命名修改
-       1. 编辑/etc/default/grub
-       2. GRUB_CMDLINE_LINUX增加biosdevname=0 net.ifnnet.ifnames=0
-       3. $sudo grub2-mkconfig -o /boot/grub2/grub.cfg 更新grub
-       4. 移动配置文件 mv /etc/sysconfig/network-scripts/ifcfg-enp0s3 /etc/sysconfig/network-scripts/ifcfg-eth0
-       5. $sudo reboot 重启
-       * biosdevname和net.ifnames两个参数
-         * biosdevname=0 net.ifnames=1 则 网卡名为ens33
-         * biosdevname=1 net.ifnames=0 则 网卡名为em1
-         * biosdevname=0 net.ifnames=0 则 网卡名为eth0
-    * 配置IP
-       * ipconfig eth0 192.168.1.2 netmask 255.255.255.0 设置IP
-       * ifup eth0 启用网卡
-       * ifdown eth0 禁用网卡
-  * netstat -ntpl 查看端口号对应的服务 -n不反解域名 -t只查看TCP连接 -p查看对应服务 -l之查看listen状态服务(默认是established)
-  * route
-    * route -n 查看网关 -n不反解域名(较快)
-    * route add default gw 192.168.1.1 添加默认网关 192.168.1.1
-    * route add -host 10.0.0.2 gw 192.168.1.2 添加访问10.0.0.2主机的专用网关192.168.1.2
-    * route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3 添加访问10.0.0.0网段的专用网关192.168.1.3
-* iproute2
-  * ip
-    * ip addr ls 查看网络状态 ifconfig
-    * ip link set dev eth0 up 启用网卡 ifup eth0
-    * ip addr add 192.168.1.2/24 dev eth0 配置IP地址 ifconfig eth0 192.168.1.2 netmask 255.255.255.0
-    * ip route add 10.0.0/24 via 192.168.1.3 配置10.0.0.0网段的专用网关 route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3
-  * ss 同netstat基本一致
+* ifconfig
+  * 网卡命名
+    * eth0 第一块网卡
+    * CentOS一致性网络设备命名
+      * em1 板载网卡
+      * ens33 PCI-E网卡
+      * enp0s3 无法获取物理信息的PCI-E网卡
+  * 网络接口命名修改
+      1. 编辑 /etc/default/grub
+      2. GRUB_CMDLINE_LINUX 增加 biosdevname=0 net.ifnnet.ifnames=0
+      3. biosdevname 和 net.ifnames 两个参数设置效果
+         1. biosdevname=0 net.ifnames=1 则网卡名为ens33
+         2. biosdevname=1 net.ifnames=0 则网卡名为em1
+         3. biosdevname=0 net.ifnames=0 则网卡名为eth0
+      4. $sudo grub2-mkconfig -o /boot/grub2/grub.cfg 更新grub
+      5. 移动配置文件 mv /etc/sysconfig/network-scripts/ifcfg-enp0s3 /etc/sysconfig/network-scripts/ifcfg-eth0
+      6. $sudo reboot 重启
+  * 配置IP
+    * ipconfig eth0 192.168.1.2 netmask 255.255.255.0 设置IP
+    * ifup eth0 启用网卡
+    * ifdown eth0 禁用网卡
+* netstat -ntpl 查看端口号对应的服务 -n不反解域名 -t只查看TCP连接 -p查看对应服务 -l之查看listen状态服务(默认是established)
+* route
+  * route -n 查看网关 -n不反解域名(较快)
+  * route add default gw 192.168.1.1 添加默认网关 192.168.1.1
+  * route add -host 10.0.0.2 gw 192.168.1.2 添加访问10.0.0.2主机的专用网关192.168.1.2
+  * route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3 添加访问10.0.0.0网段的专用网关192.168.1.3
+
+### iproute2
+
+* ip
+  * ip addr ls 查看网络状态 ifconfig
+  * ip link set dev eth0 up 启用网卡 ifup eth0
+  * ip addr add 192.168.1.2/24 dev eth0 配置IP地址 ifconfig eth0 192.168.1.2 netmask 255.255.255.0
+  * ip route add 10.0.0/24 via 192.168.1.3 配置10.0.0.0网段的专用网关 route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3
+* ss 同netstat基本一致
 * mii-tool eth0 查看网卡物理连接情况
 * ping 192.168.1.1 ICMP判断是否能连通主机
 * traceroute -w 1 192.168.1.1 查看到192.168.1.1路由路径-w 1长时间等待只等待1秒
@@ -81,6 +82,7 @@ OSI 七层网络模型
 * iftop -P 查看本地端口的带宽使用情况 -P混杂模式
 
 ### SysV和systemd管理网络服务
+
 * /etc/sysconfig/network-scripts/ifcfg-eth0 网卡eth0配置
   * 配置完成后SysV(自CentOS8后不再启用该服务)或者systemd(推荐)重启服务使服务生效
 * SysV
@@ -99,12 +101,14 @@ OSI 七层网络模型
 ## 操作系统
 
 Linux含义：
+
 * Linus编写的操作系统内核
 * 广义的操作系统
 
 Linux版本：
+
 * 内核版本，如4.18.0
-   
+
 | 主版本号 | 次版本号               | 末版本号 |
 | -------- | ---------------------- | -------- |
 | 4        | 18                     | 0        |
@@ -166,7 +170,7 @@ Linux版本：
 | help | help   | help cd(外部)或ls --help(内部)   |
 | info | info   | info ls(比help命令更详细)        |
 
-```
+```text
 1   Executable programs or shell commands
 2   System calls (functions provided by the kernel)
 3   Library calls (functions within program libraries)
@@ -403,7 +407,7 @@ top参数说明
   * facl 文件访问控制(Filesystem Access Control List)
     * getfacl filename 查看文件访问控制权限
     * setfacl -m u:user1:r filename 赋予user1用户读权限 -m赋予权限 -x收回权限
-    * setfacl -m g:user2:rw filename 赋予user2用户组读写权限 
+    * setfacl -m g:user2:rw filename 赋予user2用户组读写权限
 * xfs文件系统用户磁盘配额
   1. mkfs.xfs -f /dev/sdb1 格式化/dev/sdb1为xfs文件系统
   2. mkdir /mnt/sdb1 创建挂载路径
@@ -423,14 +427,15 @@ top参数说明
     2. mkswap /swapfile `mkswap: /swapfile: insecure permissions 0644, 0600 suggested.` 初始化swapfile为swap
     3. chmod 0600 /swapfile 修改文件权限为0600
     4. swapon /swapfile 启用swapfile为swap
-    3. swapoff /swapfile 关闭swapfile为swap
-    5. /etc/fstab 新增`/swapfile swap swap defaults 0 0`
+    5. swapoff /swapfile 关闭swapfile为swap
+    6. /etc/fstab 新增`/swapfile swap swap defaults 0 0`
 
 #### shell脚本
+
 * 内建命令和外部命令
   * 内建命令不创建子进程 对当前shell生效
     * bash ./filename.sh 不需要filename.sh执行权限
-    * ./filename.sh 
+    * ./filename.sh
   * 外部命令创建子进程 对当前shell隔离
     * source ./filename.sh
     * . filename.sh
