@@ -44,13 +44,21 @@ OSI 七层网络模型
       * enp0s3 无法获取物理信息的PCI-E网卡
   * 网络接口命名修改
       1. 编辑 /etc/default/grub
+
       2. GRUB_CMDLINE_LINUX 增加 biosdevname=0 net.ifnnet.ifnames=0
+
       3. biosdevname 和 net.ifnames 两个参数设置效果
-         1. biosdevname=0 net.ifnames=1 则网卡名为ens33
-         2. biosdevname=1 net.ifnames=0 则网卡名为em1
-         3. biosdevname=0 net.ifnames=0 则网卡名为eth0
+
+         ```reStructuredText
+         biosdevname=0 net.ifnames=1 则网卡名为ens33
+         biosdevname=1 net.ifnames=0 则网卡名为em1
+         biosdevname=0 net.ifnames=0 则网卡名为eth0
+         ```
+
       4. $sudo grub2-mkconfig -o /boot/grub2/grub.cfg 更新grub
+
       5. 移动配置文件 mv /etc/sysconfig/network-scripts/ifcfg-enp0s3 /etc/sysconfig/network-scripts/ifcfg-eth0
+
       6. $sudo reboot 重启
   * 配置IP
     * ipconfig eth0 192.168.1.2 netmask 255.255.255.0 设置IP
