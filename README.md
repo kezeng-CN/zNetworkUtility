@@ -162,13 +162,15 @@ Linux版本：
 
 #### 常用目录结构
 
-* / 根目录
-* /root 用户root的家目录
-* /home/username 用户username的家目录
-* /etc 配置文件目录
-* /bin 命令目录
-* /sbin 管理命令目录
-* /usr/bin /user/sbin 系统预装的其它命令
+| 路径                   | 说明                 |
+| ---------------------- | -------------------- |
+| /                      | 根目录               |
+| /root                  | 用户root的家目录     |
+| /home/username         | 用户username的家目录 |
+| /etc                   | 配置文件目录         |
+| /bin                   | 命令目录             |
+| /sbin                  | 管理命令目录         |
+| /usr/bin<br>/user/sbin | 系统预装的其它命令   |
 
 #### 帮助命令
 
@@ -195,35 +197,35 @@ Linux版本：
 一切皆文件
 
 * 文件查看
-  *. pwd
-  *. cd
-  *. ls
+  * pwd
+  * cd
+  * ls
 * 目录文件的创建和删除
-  *. mkdir
-  *. rmdir
-  *. rm -r
+  * mkdir
+  * rmdir
+  * rm -r
 * 通配符
-  *. * 匹配任何字符串
-  *. ? 匹配1个字符
-  *. [xyz] 匹配xyz任意一个字符
-  *. [a-z] 匹配一个范围
-  *. [!xyz]或[^xyz] 不匹配
+  * \* 匹配任何字符串
+  * ? 匹配1个字符
+  * [xyz] 匹配xyz任意一个字符
+  * [a-z] 匹配一个范围
+  * [!xyz]或[^xyz] 不匹配
 * 文件操作
-  *. cp -r 文件夹 -p 时间 -a 时间和权限
-  *. mv
+  * cp -r 文件夹 -p 时间 -a 时间和权限
+  * mv
 * 文件内容查看
-  *. cat 文件内容显示到终端
-  *. head 查看文件开头
-  *. tail 查看文件结尾 -f 文件更新同步更新
-     *. tail -f /var/log/message 通过tail查看系统日志
-     *. tail -f /var/log/secure 通过tail查看安全日志
-     *. tail -f /var/log/dmesg 通过tail查看内核日志
-     *. tail -f /var/log/cron 通过tail查看即发(周期性)任务日志
-  *. wc 统计文件内容信息
+  * cat 文件内容显示到终端
+  * head 查看文件开头
+  * tail 查看文件结尾 -f 文件更新同步更新
+    * tail -f /var/log/message 通过tail查看系统日志
+    * tail -f /var/log/secure 通过tail查看安全日志
+    * tail -f /var/log/dmesg 通过tail查看内核日志
+    * tail -f /var/log/cron 通过tail查看即发(周期性)任务日志
+  * wc 统计文件内容信息
 * 打包和压缩
-  *. tar cf /tmp/etc.bak.tar /etc
-  *. tar czf /tmp/etc.bak.tar.gz /etc
-  *. tar cjf /tmp/etc.bak.tar.bz2 /etc
+  * tar cf /tmp/etc.bak.tar /etc
+  * tar czf /tmp/etc.bak.tar.gz /etc
+  * tar cjf /tmp/etc.bak.tar.bz2 /etc
 * vi
   * 配置文件 /etc/vimrc
   * normal 正常模式
@@ -260,13 +262,13 @@ Linux版本：
 #### 进程管理
 
 * ps 进程状态
-  * ps -e | more 
+  * ps -e | more
   * ps -ef 显示 UID启动用户ID(有效用户ID) PPID父进程ID CMD执行文件路径
   * ps -L 显示 LWP线程
 * pstree 进程状态树
 * top 动态显示负载情况
   * load average: 0.00, 0.00, 0.00 平均负载:1分钟,5分钟,15分钟的采样结果
-  * Tasks: total running sleeping stopped zombie 
+  * Tasks: total running sleeping stopped zombie
   * %Cpu(s): us sy ni id wa hi si st
     * 所有状态数值相加为100
   * PID USER PR NI VIRT RES SHR S %CPU %MEM TIME+ COMMAND
@@ -321,13 +323,16 @@ top参数说明
   * screen -ls 查看screen会话
   * screen -r 22592 恢复22592的screen会话
 * init 由内核启动的
-  * 0 停机或者关机(千万不能将initdefault设置为0)
-  * 1 单用户模式
-  * 2 多用户模式(NFS不可用Net File System)
-  * 3 完全多用户模式(标准的运行级别)
-  * 4 安全模式
-  * 5 图形化(图形界面)
-  * 6 重启(千万不要把initdefault设置为6)
+    | 运行级别 | 说明                               |
+    | ---- | ------------------------------------------ |
+    | 0    | 停机或者关机(千万不能将initdefault设置为0) |
+    | 1    | 单用户模式                                 |
+    | 2    | 多用户模式(NFS不可用Net File System)       |
+    | 3    | 完全多用户模式(标准的运行级别)             |
+    | 4    | 安全模式                                   |
+    | 5    | 图形化(图形界面)                           |
+    | 6    | 重启(千万不要把initdefault设置为6)         |
+
 * service
   * /etc/init.d 存放service启动脚本
   * chkconfig --list 查看服务在不同init级别下的启动状态
@@ -357,44 +362,85 @@ top参数说明
     * 1 Enforcing
     * 0 Permissive
 
-#### 内存和磁盘管理
+#### 内存管理
 
-* free 按照KB为单位查看内存大小 -m按单位MB -g按单位GB
-* fdisk -l 查看磁盘分区
-  1. fdisk /dev/sdb 在磁盘sdb上创建分区
-  2. 根据fdisk帮助创建:n创建分区→p创建主\e拓展分区→分区数量→分区大小→w保存
-  3. partprobe && mkfs.ext4 /dev/sdb1 通知系统分区表的变化并通过ext4格式化分区sdb1
-  4. mkdir /mnt/sdb1 创建挂载路径
-  5. mount /dev/sdb1 /mnt/sdb1/ 挂载sdb1磁盘到/mnt/sdb1路径
-  6. /etc/fstab 新增`/dev/sdb1 /mnt/sdb1 ext4 defaults 0 0`
-* parted -l 通过分区工具查看磁盘分区
-  * 大于2t的磁盘分区
-* df -h 查看分区对应目录
-* du -h 查看文件占用实际大小
-  1. dd if=/dev/zero bs=4M count=10 of=hole seek=20 创建一个空洞文件
-  2. ls -lh hole 展示文件大小120M
-  3. du -h 展示文件占用磁盘空间40M
-* 软raid使用
-  1. mdadm -C /dev/md0 -a yes -l1 -n2 /dev/sdb[1,2] 创建软raid分区md0 -C创建 -a yes询问全部选择yes -l1模式raid1 -n2依赖2块磁盘 /dev/sdb[1,2]指定分区sdb1和sdb2
-     * mdadm -S /dev/md0 删除raid分区md0
-  2. mdadm -D /dev/md0 查看raid分区md0
-  3. echo DEVICE /dev/sdb[1,2] >> /etc/mdadm.conf 追加磁盘信息至mdadm配置文件
-  4. mdadm -Evs >> /etc/mdadm.conf
-  5. mkfs.xfs /dev/md0 格式化raid分区md0
-  6. mount /dev/md0 /mnt/md0
-* LVM逻辑卷
-  1. pvcreate /dev/sd[b,c,d]1 通过sdb1 sdc1和sdd1创建物理卷
-  2. pvs 查看物理卷
-  3. vgcreate vg1 /dev/sd[b,c]1 通过sdb1和sdc1创建卷组vg1
-  4. vgs 查看卷组
-  5. lvcreate -L 100M -n lv1 vg1 创建逻辑卷 -L 100M指定大小100M -n lv1逻辑卷名称 vg1所属卷组名称
-  6. mkdir /mnt/lv1 创建逻辑卷对应挂载点
-  7. mkfs.xfs /dev/vg1/lv1 格式化逻辑卷lv1
-  8. mount /dev/vg1/lv1 /mnt/lv1/ 挂载逻辑卷到对应路径
-  9. /etc/fstab 新增逻辑卷挂载节点
-  10. vgextend vg1 /dev/sdd1 拓展卷组vg1
-  11. lvextend -L 59G /dev/vg1/lv1 拓展逻辑卷lv1
-  12. xfs_growfs /dev/vg1/lv1 文件系统拓展
+free - Display amount of free and used memory in the system 显示系统的可用内存和占用内存
+
+```bash
+free -k # 按照KB为单位查看内存大小 -m按单位MB -g按单位GB
+```
+
+#### 磁盘管理
+
+##### fdisk - manipulate disk partition table 操纵磁盘分区表
+
+```bash
+fdisk /dev/sdb # 在磁盘sdb上创建分区
+# 根据fdisk帮助创建:n创建分区→p创建主\e拓展分区→分区数量→分区大小→w保存
+partprobe && mkfs.ext4 /dev/sdb1 # 通知系统分区表的变化并通过ext4格式化分区sdb1
+mkdir /mnt/sdb1 # 创建挂载路径
+mount /dev/sdb1 /mnt/sdb1/ # 挂载sdb1磁盘到/mnt/sdb1路径
+/etc/fstab # 需要在文件/dev/sdb1中新增行 /mnt/sdb1 ext4 defaults 0 0
+```
+
+##### parted - a partition manipulation program 操纵分区的程序 用于大于2T磁盘分区
+
+```bash
+
+```
+
+##### df - report file system disk space usage 磁盘使用状态报告
+
+```bash
+df -h # 查看分区对应目录
+```
+
+##### du - estimate file space usage 估计文件占用空间
+
+```bash
+du -h # 查看文件占用实际大小
+dd if=/dev/zero bs=4M count=10 of=hole seek=20 # 创建一个空洞文件
+ls -lh hole # 展示文件大小120M
+du -h # 展示文件占用磁盘空间40M
+du -hs ./* # 查看当前路径文件夹占用磁盘空间
+```
+
+##### 软raid使用
+
+```bash
+mdadm -C /dev/md0 -a yes -l1 -n2 /dev/sdb[1,2] # 创建软raid分区md0 -C创建 -a yes询问全部选择yes -l1模式raid1 -n2依赖2块磁盘 /dev/sdb[1,2]指定分区sdb1和sdb2
+# mdadm -S /dev/md0 删除raid分区md0
+mdadm -D /dev/md0 # 查看raid分区md0
+echo DEVICE /dev/sdb[1,2] >> /etc/mdadm.conf # 追加磁盘信息至mdadm配置文件
+mdadm -Evs >> /etc/mdadm.conf
+mkfs.xfs /dev/md0 # 格式化raid分区md0
+mount /dev/md0 /mnt/md0
+```
+
+##### LVM逻辑卷
+
+创建物理卷→创建逻辑卷组→创建逻辑卷→格式化→挂载
+
+```bash
+pvcreate /dev/sd[b,c,d]1 # 通过sdb1 sdc1和sdd1创建物理卷
+pvs # 查看物理卷
+vgcreate vg1 /dev/sd[b,c]1 # 通过sdb1和sdc1创建卷组vg1
+vgs # 查看卷组
+lvcreate -L 100M -n lv1 vg1 # 创建逻辑卷 -L 100M指定大小100M -n lv1逻辑卷名称 vg1所属卷组名称
+mkdir /mnt/lv1 # 创建逻辑卷对应挂载点
+mkfs.xfs /dev/vg1/lv1 # 格式化逻辑卷lv1
+mount /dev/vg1/lv1 /mnt/lv1/ # 挂载逻辑卷到对应路径
+/etc/fstab # 新增逻辑卷挂载节点
+```
+
+创建物理卷→拓展逻辑卷组→拓展逻辑卷→文件系统拓展
+
+```bash
+vgextend vg1 /dev/sdd1 # 拓展卷组vg1
+lvextend -L +5G /dev/vg1/lv1 # 拓展逻辑卷lv1增大5G
+lvextend -l +100%FREE /dev/vg1/lv1 # 拓展逻辑卷lv1增大剩余空间
+xfs_growfs /dev/vg1/lv1 # 文件系统拓展
+```
 
 #### 文件系统
 
@@ -456,25 +502,30 @@ top参数说明
 | debian<br>ubuntu | apt  | deb    |
 
 * yum源安装
-  * /etc/yum.repos.d/CentOS-Base.repo yum源配置
-  * sudo wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo 下载阿里云镜像源配置替换官方yum源配置
-  * yum makecache 生成缓存
-  * yum update 软件升级
+
+```bash
+/etc/yum.repos.d/CentOS-Base.repo yum源配置
+sudo wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo 下载阿里云镜像源配置替换官方yum源配置
+yum makecache 生成缓存
+yum update 软件升级
+```
+
 * 二进制安装
 * 源代码安装
-  1. wget https://openresty.org/download/openresty-1.15.8.3.tar.gz 如下载openresty源代码
-  2. tar zxf openresty-1.15.8.3.tar.gz 解压源代码包
-  3. cd openresty-1.15.8.3.tar.gz 切换到源代码路径
-  4. ./configure --prefix=/usr/local/openresty 配置
-     1. sudo yum install openssl-devel 安装相应依赖openssl -devel代表开发库
-  5. make -j 生成到build目录
-  6. make install 将build目录部署到指定的目录当中
+  
+```bash
+wget https://openresty.org/download/openresty-1.15.8.3.tar.gz # 如下载openresty源代码
+tar zxf openresty-1.15.8.3.tar.gz # 解压源代码包
+cd openresty-1.15.8.3.tar.gz # 切换到源代码路径
+./configure --prefix=/usr/local/openresty # 配置
+sudo yum install openssl-devel # 安装相应依赖openssl -devel代表开发库
+make -j # 生成到build目录
+make install # 将build目录部署到指定的目录当中
+```
 
-### 性能
+## 性能
 
 性能指标
 
 * 高并发(吞吐)
 * 响应快(延迟)
-
-#### 
