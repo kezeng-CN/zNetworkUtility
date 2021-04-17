@@ -35,59 +35,111 @@ OSI 七层网络模型
 
 ### net-tools
 
-* ifconfig
-  * 网卡命名
-    * eth0 第一块网卡
-    * CentOS一致性网络设备命名
-      * em1 板载网卡
-      * ens33 PCI-E网卡
-      * enp0s3 无法获取物理信息的PCI-E网卡
-  * 网络接口命名修改
-      1. 编辑 /etc/default/grub
+#### 网卡命名
 
-      2. GRUB_CMDLINE_LINUX 增加 biosdevname=0 net.ifnnet.ifnames=0
+* eth0 第一块网卡
+* CentOS一致性网络设备命名
+  * em1 板载网卡
+  * ens33 PCI-E网卡
+  * enp0s3 无法获取物理信息的PCI-E网卡
 
-      3. biosdevname 和 net.ifnames 两个参数设置效果
+#### 网络接口命名修改
 
-         ```reStructuredText
-         biosdevname=0 net.ifnames=1 则网卡名为ens33
-         biosdevname=1 net.ifnames=0 则网卡名为em1
-         biosdevname=0 net.ifnames=0 则网卡名为eth0
-         ```
+通过修改启动内核参数biosdevname和net.ifnames设置网络接口命名
 
-      4. $sudo grub2-mkconfig -o /boot/grub2/grub.cfg 更新grub
+| biosdevname | net.ifnnet.ifnames | 结果  |
+| ----------- | ------------------ | ----- |
+| 0           | 1                  | ens33 |
+| 1           | 0                  | em1   |
+| 0           | 0                  | eth0  |
 
-      5. 移动配置文件 mv /etc/sysconfig/network-scripts/ifcfg-enp0s3 /etc/sysconfig/network-scripts/ifcfg-eth0
+```bash
+# /etc/default/grub Linux系统启动内核参数文件
+if test -z $(`cat /etc/default/grub | grep GRUB_CMDLINE_LINUX=\"`); then \
+  sudo sed 's/GRUB_CMDLINE_LINUX=\"/GRUB_CMDLINE_LINUX=\"biosdevname=0\ net.ifnnet.ifnames=0\ /' /etc/default/grub ; \
+fi # GRUB_CMDLINE_LINUX 增加 biosdevname=0 net.ifnnet.ifnames=0
 
-      6. $sudo reboot 重启
-  * 配置IP
-    * ipconfig eth0 192.168.1.2 netmask 255.255.255.0 设置IP
-    * ifup eth0 启用网卡
-    * ifdown eth0 禁用网卡
-* netstat -ntpl 查看端口号对应的服务 -n不反解域名 -t只查看TCP连接 -p查看对应服务 -l之查看listen状态服务(默认是established)
-* route
-  * route -n 查看网关 -n不反解域名(较快)
-  * route add default gw 192.168.1.1 添加默认网关 192.168.1.1
-  * route add -host 10.0.0.2 gw 192.168.1.2 添加访问10.0.0.2主机的专用网关192.168.1.2
-  * route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3 添加访问10.0.0.0网段的专用网关192.168.1.3
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg # 更新grub
+mv /etc/sysconfig/network-scripts/ifcfg-enp0s3 /etc/sysconfig/network-scripts/ifcfg-eth0 # 移动配置文件
+sudo reboot # 重启
+```
 
-### iproute2
+#### ifconfig
 
-* ip
-  * ip addr ls 查看网络状态 ifconfig
-  * ip link set dev eth0 up 启用网卡 ifup eth0
-  * ip addr add 192.168.1.2/24 dev eth0 配置IP地址 ifconfig eth0 192.168.1.2 netmask 255.255.255.0
-  * ip route add 10.0.0/24 via 192.168.1.3 配置10.0.0.0网段的专用网关 route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3
-* ss 同netstat基本一致
-* mii-tool eth0 查看网卡物理连接情况
-* ping 192.168.1.1 ICMP判断是否能连通主机
-* traceroute -w 1 192.168.1.1 查看到192.168.1.1路由路径-w 1长时间等待只等待1秒
-* mtr 更详细的路由信息mtr为My traceroute的简写
-* nslookup www.baidu.com 解析域名www.baidu.com对应IP
-* telnet www.baidu.com 80 查看连接到www.baidu.com域名对应主机80端口是否可用
-  * 退出使用ctrl+] 输入quit退出
-* tcpdump -i any -n host 10.0.0.1 and port 80 -w /tmp/filename 抓取-i any任意网卡 -n不反解域名host 10.0.0.1 port 80的数据包 -w保存至/tmp/filename中
-* iftop -P 查看本地端口的带宽使用情况 -P混杂模式
+```bash
+ipconfig eth0 192.168.1.2 netmask 255.255.255.0 # 设置IP
+ifup eth0 # 启用网卡
+ifdown eth0 # 禁用网卡
+```
+
+##### netstat
+
+```bash
+netstat -ntpl 查看端口号对应的服务 -n不反解域名 -t只查看TCP连接 -p查看对应服务 -l之查看listen状态服务(默认是established)
+```
+
+##### route
+
+```bash
+route -n # 查看网关 -n不反解域名(较快)
+route add default gw 192.168.1.1 # 添加默认网关 192.168.1.1
+route add -host 10.0.0.2 gw 192.168.1.2 # 添加访问10.0.0.2主机的专用网关192.168.1.2
+route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3 # 添加访问10.0.0.0网段的专用网关192.168.1.3
+```
+
+#### iproute2
+
+net-tools起源于BSD的TCP/IP工具箱,后来成为老版本Linux内核中配置网络功能的工具
+iproute2是linux下管理控制TCP/IP网络和流量控制的新一代工具包,旨在替代老派的工具链net-tools
+
+##### ip
+
+```bash
+ip addr ls # 查看网络状态 类似ifconfig
+ip link set dev eth0 up # 启用网卡 ifup eth0
+ip addr add 192.168.1.2/24 dev eth0 # 配置IP地址 ifconfig eth0 192.168.1.2 netmask 255.255.255.0
+ip route add 10.0.0/24 via 192.168.1.3 # 配置10.0.0.0网段的专用网关 route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3
+```
+
+##### ss
+
+```bash
+ss # 同netstat基本一致
+```
+
+##### mii-tool
+
+```bash
+mii-tool eth0 # 查看网卡物理连接情况
+```
+
+##### ping
+
+```bash
+ping 192.168.1.1 # ICMP判断是否能连通主机
+```
+
+##### traceroute
+
+```bash
+traceroute -w 1 192.168.1.1 # 查看到192.168.1.1路由路径-w 1长时间等待只等待1秒
+mtr # 更详细的路由信息mtr为My traceroute的简写
+```
+
+##### nslookup
+
+```bash
+nslookup www.baidu.com # 解析域名www.baidu.com对应IP
+```
+
+##### telnet
+
+```bash
+telnet www.baidu.com 80 # 查看连接到www.baidu.com域名对应主机80端口是否可用
+# 退出使用ctrl+] 输入quit退出
+tcpdump -i any -n host 10.0.0.1 and port 80 -w /tmp/filename # 抓取-i any任意网卡 -n不反解域名host 10.0.0.1 port 80的数据包 -w保存至/tmp/filename中
+iftop -P # 查看本地端口的带宽使用情况 -P混杂模式
+```
 
 ### SysV和systemd管理网络服务
 
@@ -115,12 +167,12 @@ Linux含义：
 
 Linux版本：
 
-* 内核版本，如4.18.0
+* 内核版本,如4.18.0
 
 | 主版本号 | 次版本号               | 末版本号 |
 | -------- | ---------------------- | -------- |
 | 4        | 18                     | 0        |
-|          | 奇数开发版，偶数稳定版 |          |
+|          | 奇数开发版,偶数稳定版 |          |
 
 * 发行版本
 
