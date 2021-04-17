@@ -89,7 +89,7 @@ route add -net 10.0.0.0 netmask 255.255.255.0 gw 192.168.1.3 # 添加访问10.0.
 
 #### iproute2
 
-net-tools起源于BSD的TCP/IP工具箱,后来成为老版本Linux内核中配置网络功能的工具
+net-tools起源于BSD的TCP/IP工具箱,后来成为老版本Linux内核中配置网络功能的工具  
 iproute2是linux下管理控制TCP/IP网络和流量控制的新一代工具包,旨在替代老派的工具链net-tools
 
 ##### ip
