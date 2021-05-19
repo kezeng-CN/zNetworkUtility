@@ -1,3 +1,3 @@
 add_executable(batchwrite batchwrite.c)
-target_link_libraries(batchwrite yolanda)
+target_link_libraries(batchwrite NetworkUtility)
 

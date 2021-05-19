@@ -1,5 +1,5 @@
 add_executable(streamserver streamserver.c)
-target_link_libraries(streamserver yolanda)
+target_link_libraries(streamserver NetworkUtility)
 
 add_executable(streamclient streamclient.c)
-target_link_libraries(streamclient yolanda)
+target_link_libraries(streamclient NetworkUtility)

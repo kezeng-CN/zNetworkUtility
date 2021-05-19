@@ -1,11 +1,11 @@
 add_executable(unixstreamserver unixstreamserver.c)
-target_link_libraries(unixstreamserver yolanda)
+target_link_libraries(unixstreamserver NetworkUtility)
 
 add_executable(unixstreamclient unixstreamclient.c)
-target_link_libraries(unixstreamclient yolanda)
+target_link_libraries(unixstreamclient NetworkUtility)
 
 add_executable(unixdataserver unixdataserver.c)
-target_link_libraries(unixdataserver yolanda)
+target_link_libraries(unixdataserver NetworkUtility)
 
 add_executable(unixdataclient unixdataclient.c)
-target_link_libraries(unixdataclient yolanda)
+target_link_libraries(unixdataclient NetworkUtility)

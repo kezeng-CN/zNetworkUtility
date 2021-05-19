@@ -1,11 +1,11 @@
 add_executable(bufferclient bufferclient.c)
-target_link_libraries(bufferclient yolanda)
+target_link_libraries(bufferclient NetworkUtility)
 
 add_executable(samplebuffer01 samplebuffer01.c)
-target_link_libraries(samplebuffer01 yolanda)
+target_link_libraries(samplebuffer01 NetworkUtility)
 
 add_executable(samplebuffer02 samplebuffer02.c)
-target_link_libraries(samplebuffer02 yolanda)
+target_link_libraries(samplebuffer02 NetworkUtility)
 
 add_executable(samplebuffer03 samplebuffer03.c)
-target_link_libraries(samplebuffer03 yolanda)
+target_link_libraries(samplebuffer03 NetworkUtility)
