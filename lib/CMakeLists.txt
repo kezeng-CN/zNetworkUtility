@@ -45,7 +45,7 @@ endif ()
 
 
 add_library(NetworkUtility ${NetworkUtility_lib})
-target_link_libraries(NetworkUtility pthread)
+target_link_libraries(NetworkUtility pthread rt)
 
 install(TARGETS NetworkUtility DESTINATION lib)
 
