@@ -1,0 +1,6 @@
+add_executable(nonblockingserver nonblockingserver.c)
+target_link_libraries(nonblockingserver NetworkUtility)
+
+
+add_executable(nonblockingclient nonblockingclient.c)
+target_link_libraries(nonblockingclient NetworkUtility)
