@@ -1,2 +1,2 @@
 add_executable(flags flags.cc)
-target_link_libraries(flags gflags)
+target_link_libraries(flags gflags NetworkUtility)
