@@ -581,3 +581,54 @@ make install # 将build目录部署到指定的目录当中
 
 * 高并发(吞吐)
 * 响应快(延迟)
+
+### 平均负载
+
+单位时间内,系统处于**可运行状态**和**不可中断状态**的平均进程数,也是平均活跃进程数
+
+**可运行状态**指正在使用CPU或者正在等待CPU
+
+**可中断状态**因为等待某某事件的发生而被挂起(比如等待socket连接、等待信号量)
+
+**不可中断状态**正处于内核态关键流程中的进程且不可打断(比如进程向磁盘读写数据时为了保证数据的一致性在得到磁盘回复前不能被其他进程或者中断打断的)
+
+不可中断状态实际上是系统对进程和硬件设备的一种保护机制
+
+#### stress
+
+stress是一个Linux系统压力测试工具
+
+```bash
+sudo yum install stress # stress压力测试工具
+stress --cpu 1 --timeout 600 # 模拟1个CPU密集型进程600s  (%usr列)
+stress -i 1 --timeout 600 # 模拟1个IO密集型进程600s (%iowait列)
+stress -c 8 --timeout 600 # 模拟8个进程600s (pidstat %wait列)
+```
+
+#### stress-ng
+
+stress使用的是sync()系统调用,作用是刷新缓冲区内存到磁盘中若缓冲区可能比较小,无法产生大的IO压力
+
+stress的下一代stress-ng
+
+```bash
+stress-ng -i 1 --timeout 600 --hdd 1 # 模拟1个IO密集型进程600s hdd 读写临时文件 (%iowait列)
+```
+
+#### mpstat
+
+mpstat是一个多核CPU性能分析工具,用来实时查看每个CPU的性能指标,以及所有CPU的平均指标
+
+```bash
+sudo yum install sysstat # sysstat性能工具
+mpstat -P ALL 5 1 # -P ALL监控所有CPU 5秒间隔输出一组数据
+```
+
+##### pidstat
+
+pidstat是一个进程性能分析工具,用来实时查看进程的CPU、内存、I/O 以及上下文切换等性能指标
+
+```bash
+sudo yum install sysstat # sysstat性能工具
+pidstat -u 5 1 # 间隔5秒后输出一组数据
+```
